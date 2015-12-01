@@ -21,6 +21,13 @@ module AcceptanceHelper
     wait_for_open_port TEST_PORT
 
     yield
+
+  rescue Redis::ConnectionError, Redis::CannotConnectError
+    # NOTE
+    # This is to keep our tests passing if they
+    # keep smashing into each other during test
+    # runs.
+    retry
   rescue TimeoutError
     sleep 0.01
 
