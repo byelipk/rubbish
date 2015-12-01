@@ -1,4 +1,6 @@
 require 'socket'
+require_relative './config'
+require_relative './client'
 
 module Rubbish
   class Server
