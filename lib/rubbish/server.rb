@@ -16,6 +16,8 @@ module Rubbish
     end
 
     def listen
+      setup_listeners!
+      
       readable = Array.new
       clients  = Hash.new
       server   = TCPServer.new(port)
@@ -54,5 +56,15 @@ module Rubbish
         socket.close
       end
     end
+
+    private
+
+      def setup_listeners!
+        Signal.trap("SIGINT") do
+          print "\nTossing out the rubbish...\n"
+          shutdown
+        end
+      end
+
   end
 end
