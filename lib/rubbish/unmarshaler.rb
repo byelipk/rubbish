@@ -1,5 +1,5 @@
 module Rubbish
-  class Unmarshaler    
+  class Unmarshaler
     def unmarshal(data)
       io        = StringIO.new(data)
       result    = Array.new
@@ -35,16 +35,19 @@ module Rubbish
       [result, processed]
     end
 
-    def safe_readine(io)
-      io.readline("\r\n").tap do |line|
-        raise EOFError unless line.end_with?("\r\n")
-      end
-    end
+    private
 
-    def safe_readpartial(io, length)
-      io.readpartial(length).tap do |data|
-        raise EOFError unless data.length == length
+      def safe_readine(io)
+        io.readline("\r\n").tap do |line|
+          raise EOFError unless line.end_with?("\r\n")
+        end
       end
-    end
+
+      def safe_readpartial(io, length)
+        io.readpartial(length).tap do |data|
+          raise EOFError unless data.length == length
+        end
+      end
+      
   end
 end
