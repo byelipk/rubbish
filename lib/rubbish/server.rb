@@ -12,11 +12,15 @@ module Rubbish
       socket = TCPServer.new(port)
 
       loop do
-        # We will block until a client connects
-        # to the `port` the server is listening on.
-        handle_client(socket.accept)
+        Thread.start(socket.accept) do |client|
+          # We will block until a client connects
+          # to the `port` the server is listening on.
+          handle_client(client)
+        end
       end
 
+    rescue Errno::EADDRINUSE
+      retry
     ensure
       socket.close if socket
     end
