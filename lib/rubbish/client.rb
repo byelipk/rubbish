@@ -1,13 +1,18 @@
 require 'stringio'
+require 'forwardable'
 require_relative './unmarshaler'
 
 module Rubbish
   class Client
 
+    extend Forwardable
+
     BYTES_TO_READ = 1024
 
     attr_reader :socket
     attr_accessor :buffer
+
+    def_delegator :unmarshaler, :unmarshal
 
     def initialize(socket)
       @socket = socket
@@ -19,7 +24,7 @@ module Rubbish
 
       # We will translate the current buffer into
       # as many commands as possible.
-      cmds, processed = unmarshaler.unmarshal(buffer)
+      cmds, processed = unmarshal(buffer)
 
       @buffer = buffer[processed..-1]
 
