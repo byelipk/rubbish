@@ -13,6 +13,7 @@ module AcceptanceHelper
   end
 
   def with_server
+    server = nil
     thread = Thread.new do
       server = Rubbish::Server.new(port: TEST_PORT)
       server.listen
@@ -39,7 +40,7 @@ module AcceptanceHelper
     # the test always fails.
     raise
   ensure
-    Thread.kill(thread) if thread
+    server.shutdown if server
   end
 
   def wait_for_open_port(port)
