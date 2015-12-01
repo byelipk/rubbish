@@ -3,7 +3,7 @@ require 'stringio'
 module Rubbish
   class Client
 
-    BYTES_TO_READ = 10
+    BYTES_TO_READ = 1024
 
     attr_reader :socket
     attr_accessor :buffer
