@@ -1,0 +1,5 @@
+require 'minitest/autorun'
+require 'pry'
+require 'pry-byebug'
+require 'redis'
+require_relative '../lib/rubbish'
