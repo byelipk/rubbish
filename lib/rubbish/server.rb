@@ -24,27 +24,31 @@ module Rubbish
     private
 
       def handle_client(client)
-        # We need to read from the client buffer
-        # in order to process commands.
-        header = client.gets.to_s
+        # We need to keep accepting data from
+        # the client until the client disconnects.
+        loop do
+          # We need to read from the client buffer
+          # in order to process commands.
+          header = client.gets.to_s
 
-        return unless header.start_with? "*"
+          return unless header.start_with? "*"
 
-        num_args = header[1..-1].to_i
+          num_args = header[1..-1].to_i
 
-        cmd = num_args.times.map do
-          len = client.gets[1..-1].to_i
-          client.read(len + 2).chomp
+          cmd = num_args.times.map do
+            len = client.gets[1..-1].to_i
+            client.read(len + 2).chomp
+          end
+
+          response = case cmd[0].downcase
+          when "ping" then "+PONG\r\n"
+          when "echo" then "$#{cmd[1].length}\r\n#{cmd[1]}\r\n"
+          end
+
+          # Now we can communicate to the client through
+          # the client socket.
+          client.write(response)
         end
-
-        response = case cmd[0].downcase
-        when "ping" then "+PONG\r\n"
-        when "echo" then "$#{cmd[1].length}\r\n#{cmd[1]}\r\n"
-        end
-
-        # Now we can communicate to the client through
-        # the client socket.
-        client.write(response)
       ensure
         client.close
       end
