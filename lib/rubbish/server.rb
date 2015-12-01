@@ -27,8 +27,13 @@ module Rubbish
           when server then
             child_socket = socket.accept
             clients[child_socket] = Client.new(child_socket)
-          else
-            clients[socket].process!
+          else 
+            begin
+              clients[socket].process!
+            rescue EOFError
+              clients.delete(socket)
+              socket.close
+            end
           end
         end
       end
