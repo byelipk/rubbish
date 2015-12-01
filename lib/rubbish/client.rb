@@ -8,27 +8,23 @@ module Rubbish
     end
 
     def handle
-      # We need to keep accepting data from
-      # the client until the client disconnects.
-      loop do
-        cmd = fetch_command
+      cmd = read_buffer
 
-        response = case cmd[0].downcase
-        when "ping" then "+PONG\r\n"
-        when "echo" then "$#{cmd[1].length}\r\n#{cmd[1]}\r\n"
-        end
+      return unless cmd
 
-        # Now we can communicate to the client through
-        # the client socket.
-        socket.write(response)
+      response = case cmd[0].downcase
+      when "ping" then "+PONG\r\n"
+      when "echo" then "$#{cmd[1].length}\r\n#{cmd[1]}\r\n"
       end
-    ensure
-      socket.close
+
+      # Now we can communicate to the client through
+      # the client socket.
+      socket.write(response)
     end
 
     private
 
-      def fetch_command
+      def read_buffer
         # We need to read from the client buffer
         # in order to process commands.
         header = socket.gets.to_s
