@@ -16,6 +16,9 @@ module Rubbish
         # to the `port` the server is listening on.
         handle_client(socket.accept)
       end
+
+    ensure
+      socket.close if socket
     end
 
     private
