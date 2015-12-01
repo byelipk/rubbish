@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+
+require 'rubbish/config'
+require 'rubbish/server'
+
+port = ARGV.fetch(0, Rubbish::Config::DEFAULT_PORT)
+
+Rubbish::Server.new(port: port).listen

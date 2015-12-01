@@ -10,6 +10,7 @@ module Rubbish
 
     def listen
       socket = TCPServer.new(port)
+
       loop do
         # We will block until a client connects
         # to the `port` the server is listening on.
@@ -22,7 +23,7 @@ module Rubbish
       def handle_client(client)
         # Now we can communicate to the client through
         # the client socket.
-        client.write("+OK\r\n")
+        client.write("+PONG\r\n")
       ensure
         client.close
       end
