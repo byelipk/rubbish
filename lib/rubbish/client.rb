@@ -5,9 +5,10 @@ module Rubbish
 
     def initialize(socket)
       @socket = socket
+      @buffer = String.new
     end
 
-    def handle
+    def process!
       cmd = read_buffer
 
       return unless cmd

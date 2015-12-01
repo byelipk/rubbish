@@ -12,21 +12,23 @@ module Rubbish
 
     def listen
       readable = Array.new
+      clients  = Hash.new
       server   = TCPServer.new(port)
 
       readable << server
 
       loop do
-        ready_to_read, _ = IO.select(readable)
+        ready_to_read, _ = IO.select(readable + clients.keys)
 
         # We will block until a client connects
         # to the `port` the server is listening on.
         ready_to_read.each do |socket|
           case socket
           when server then
-            readable << socket.accept
+            child_socket = socket.accept
+            clients[child_socket] = Client.new(child_socket)
           else
-            Client.new(socket).handle
+            clients[socket].process!
           end
         end
       end
@@ -34,7 +36,7 @@ module Rubbish
     rescue Errno::EADDRINUSE
       retry
     ensure
-      readable.each do |socket|
+      (readable + clients.keys).each do |socket|
         socket.close
       end
     end
