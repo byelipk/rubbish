@@ -14,4 +14,6 @@ class ProtocolTest < Minitest::Test
   it_marshals :ok,     "+OK\r\n"
   it_marshals nil,     "$-1\r\n"
   it_marshals "Hello", "$5\r\nHello\r\n"
+  it_marshals Rubbish::Error.incorrect_args('cmd'),
+    "-ERR wrong number of arguments for `cmd` command\r\n"
 end
