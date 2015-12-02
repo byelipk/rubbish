@@ -1,3 +1,5 @@
+require 'rubbish'
+
 module Rubbish
   class Unmarshaler
     def unmarshal(data)
@@ -9,12 +11,12 @@ module Rubbish
         loop do
           header = safe_readine(io)
 
-          raise ProtocolError unless header.start_with?("*")
+          raise Rubbish::ProtocolError unless header.start_with?("*")
 
           n = header[1..-1].to_i
 
           result << n.times.map do
-            raise ProtocolError unless io.readpartial(1) == "$"
+            raise Rubbish::ProtocolError unless io.readpartial(1) == "$"
 
             length = safe_readine(io).to_i
             safe_readpartial(io, length).tap do
@@ -25,7 +27,7 @@ module Rubbish
           processed = io.pos
         end
 
-      rescue ProtocolError
+      rescue Rubbish::ProtocolError
         processed = io.pos
       rescue EOFError
         # Incomplete command, ignore. Or there is
@@ -48,6 +50,6 @@ module Rubbish
           raise EOFError unless data.length == length
         end
       end
-      
+
   end
 end
