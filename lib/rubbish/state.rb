@@ -39,7 +39,7 @@ module Rubbish
     end
 
     def hget(hash, key)
-      store.fetch(hash, {})[key]
+      store[hash][key]
     end
 
     def hmget(hash, *keys)

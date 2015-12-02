@@ -8,10 +8,10 @@ module Acceptance
 
     def test_it_supports_hashes
       with_server do
-        assert_equal "OK",           client.hset('hash', 'abc', '123')
-        assert_equal "OK",           client.hset('hash', 'def', '456')
-        assert_equal "123",          client.hget('hash', 'abc')
-        assert_equal ['123', '456'], client.hmget('hash', 'abc', 'def')
+        client.hset('myhash', 'abc', '123')
+        client.hset('myhash', 'def', '456')
+
+        assert_equal ['123', '456'], client.hmget('myhash', 'abc', 'def')
       end
     end
 

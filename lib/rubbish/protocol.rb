@@ -4,6 +4,7 @@ module Rubbish
       case ruby
       when Symbol then "+#{ruby.to_s.upcase}\r\n"
       when String then "$#{ruby.length}\r\n#{ruby}\r\n"
+      when Array  then "*#{ruby.length}\r\n#{ruby.map {|x| marshal(x)}.join}"
       when nil    then "$-1\r\n"
       when Error  then "-ERR #{ruby.message}\r\n"
       else
