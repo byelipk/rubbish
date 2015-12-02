@@ -65,7 +65,12 @@ module Rubbish
     end
 
     def hmget(hash, *keys)
-      store[hash].values_at(*keys)
+      existing = store.fetch(hash, {})
+      if existing.is_a?(Hash)
+        existing.values_at(*keys)
+      else
+        Error.type_error
+      end
     end
 
     def hincrby(hash, key, amount)

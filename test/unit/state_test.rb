@@ -42,6 +42,16 @@ class StateTest < Minitest::Test
     assert_equal ['123', '456'],   @state.hmget('myhash', 'abc', 'def')
   end
 
+  def test_hmget_returns_error_when_not_hash_value
+    @state.set('myhash', 'bogus')
+    assert_equal Rubbish::Error.type_error,
+      @state.hmget('myhash', 'key')
+  end
+
+  def test_hmget_returns_nils_when_empty
+    assert_equal [nil], @state.hmget('myhash', 'key')
+  end
+
   def test_hincrby_increments_counter_stored_in_hash
     @state.hset('myhash', 'abc', '1')
     assert_equal 3, @state.hincrby('myhash', 'abc', '2')
