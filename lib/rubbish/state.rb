@@ -56,6 +56,7 @@ module Rubbish
     def hset(hash, key, value)
       store[hash] ||= Hash.new
       store[hash][key] = value
+
       :ok
     end
 
@@ -65,6 +66,11 @@ module Rubbish
 
     def hmget(hash, *keys)
       store[hash].values_at(*keys)
+    end
+
+    def hincrby(hash, key, amount)
+      existing = hget(hash, key)
+      store[hash][key] = existing.to_i + amount.to_i
     end
 
     private

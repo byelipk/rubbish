@@ -41,4 +41,9 @@ class StateTest < Minitest::Test
     assert_equal :ok,   @state.hset('myhash', 'def', '456')
     assert_equal ['123', '456'],   @state.hmget('myhash', 'abc', 'def')
   end
+
+  def test_hincrby_increments_counter_stored_in_hash
+    @state.hset('myhash', 'abc', '1')
+    assert_equal 3, @state.hincrby('myhash', 'abc', '2')
+  end
 end
