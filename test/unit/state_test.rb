@@ -29,4 +29,9 @@ class StateTest < Minitest::Test
     assert_equal Rubbish::Error.incorrect_args('set'),
       @state.set('abc')
   end
+
+  def test_hset_sets_value
+    assert_equal :ok,   @state.hset('myhash', 'abc', '123')
+    assert_equal '123', @state.hget('abc', 'abc')
+  end
 end
