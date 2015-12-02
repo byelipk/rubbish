@@ -31,23 +31,15 @@ module Rubbish
 
       cmds.each do |cmd|
         response = case cmd[0].downcase
-        when "ping" then "+PONG\r\n"
-        when "echo" then "$#{cmd[1].length}\r\n#{cmd[1]}\r\n"
-        when "get"  then
-          value = store[cmd[1]]
-          if value
-            "$#{value.length}\r\n#{value}\r\n"
-          else
-            "$-1\r\n"
-          end
-        when "set"  then
-          store[cmd[1]] = cmd[2]
-          "+OK\r\n"
+        when "ping" then :pong
+        when "echo" then cmd[1]
+        when "get"  then store[cmd[1]]
+        when "set"  then store[cmd[1]] = cmd[2]; :ok
         end
 
         # Now we can communicate to the client through
         # the client socket.
-        socket.write(response)
+        socket.write Rubbish::Protocol.marshal(response)
       end
     end
 
