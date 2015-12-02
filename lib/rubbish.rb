@@ -8,5 +8,9 @@ module Rubbish
     def self.incorrect_args(cmd)
       new "wrong number of arguments for `#{cmd}` command"
     end
+
+    def self.unknown_command(cmd)
+      new "unknown command `#{cmd}`"
+    end
   end
 end

@@ -35,6 +35,8 @@ module Rubbish
         when "echo" then cmd[1]
         when "get"  then state.get(*cmd[1..-1])
         when "set"  then state.set(*cmd[1..-1])
+        else
+          Error.unknown_command(cmd[0])
         end
 
         # Now we can communicate to the client through
