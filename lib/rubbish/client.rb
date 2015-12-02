@@ -1,6 +1,7 @@
 require 'stringio'
 require 'forwardable'
 require_relative './unmarshaler'
+require_relative './protocol'
 
 module Rubbish
   class Client

@@ -1,9 +1,9 @@
 require_relative '../test_helper'
+require_relative '../../lib/rubbish/protocol'
 
 class ProtocolTest < Minitest::Test
   def self.it_marshals(ruby, wire)
     test_name = ruby.to_s
-    test_name.downcase!
     test_name.gsub!(/ /, '_')
 
     define_method "test_#{test_name}" do
