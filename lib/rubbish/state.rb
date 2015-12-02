@@ -42,6 +42,10 @@ module Rubbish
       store.fetch(hash, {})[key]
     end
 
+    def hmget(hash, *keys)
+      store[hash].values_at(*keys)
+    end
+
     private
 
       def exists?(key)

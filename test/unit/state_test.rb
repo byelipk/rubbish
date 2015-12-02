@@ -32,6 +32,13 @@ class StateTest < Minitest::Test
 
   def test_hset_sets_value
     assert_equal :ok,   @state.hset('myhash', 'abc', '123')
+    assert_equal :ok,   @state.hset('otherh', 'abc', '123')
     assert_equal '123', @state.hget('myhash', 'abc')
+  end
+
+  def test_hmget_returns_multiple_value
+    assert_equal :ok,   @state.hset('myhash', 'abc', '123')
+    assert_equal :ok,   @state.hset('myhash', 'def', '456')
+    assert_equal ['123', '456'],   @state.hmget('myhash', 'abc', 'def')
   end
 end
