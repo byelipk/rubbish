@@ -5,16 +5,16 @@ require_relative './state'
 
 module Rubbish
   class Server
-    attr_reader :port, :shutdown_pipe, :state
+    attr_reader :port, :r, :w, :state
 
     def initialize(port: Config::DEFAULT_PORT)
-      @port          = port
-      @shutdown_pipe = IO.pipe
-      @state         = State.new
+      @port   = port
+      @r, @w  = IO.pipe
+      @state  = State.new
     end
 
     def shutdown
-      shutdown_pipe.last.close
+      w.close
     end
 
     def listen
@@ -26,7 +26,7 @@ module Rubbish
       running  = true
 
       readable << server
-      readable << shutdown_pipe.first
+      readable << r
 
       while running do
         ready_to_read, _ = IO.select(readable + clients.keys)
@@ -38,8 +38,7 @@ module Rubbish
           when server then
             child_socket = socket.accept
             clients[child_socket] = Client.new(child_socket)
-          when shutdown_pipe.first then
-            running = false
+          when r then running = false
           else
             begin
               clients[socket].process!(state)
