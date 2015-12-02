@@ -33,13 +33,7 @@ module Rubbish
         response = case cmd[0].downcase
         when "ping"  then :pong
         when "echo"  then cmd[1]
-        when "get"   then state.get(*cmd[1..-1])
-        when "set"   then state.set(*cmd[1..-1])
-        when "hset"  then state.hset(*cmd[1..-1])
-        when "hget"  then state.hget(*cmd[1..-1])
-        when "hmget" then state.hmget(*cmd[1..-1])
-        else
-          Error.unknown_command(cmd[0])
+        else state.apply_command(cmd)
         end
 
         # Now we can communicate to the client through

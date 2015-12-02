@@ -1,12 +1,33 @@
+require 'set'
 require_relative './store'
 
 module Rubbish
   class State
 
-    attr_reader :store
-
     def initialize(store: Store.new)
       @store = store
+    end
+
+    def self.valid_commands
+      @valid_commands ||= Set.new(
+        public_instance_methods(false).map(&:to_s) - readonly_commands
+      )
+    end
+
+    def self.readonly_commands
+      %w( apply_command )
+    end
+
+    def self.valid_command?(cmd)
+      valid_commands.include?(cmd[0])
+    end
+
+    def apply_command(cmd)
+      unless State.valid_command?(cmd)
+        return Error.unknown_command(cmd)
+      end
+
+      public_send(*cmd)
     end
 
     def set(*args)
@@ -48,8 +69,11 @@ module Rubbish
 
     private
 
-      def exists?(key)
-        store.has_key?(key)
-      end
+    attr_reader :store
+
+    def exists?(key)
+      store.has_key?(key)
+    end
+
   end
 end
