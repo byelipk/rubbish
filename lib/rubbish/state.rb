@@ -32,6 +32,16 @@ module Rubbish
       store[key]
     end
 
+    def hset(hash, key, value)
+      store[hash] ||= Hash.new
+      store[hash][key] = value
+      :ok
+    end
+
+    def hget(hash, key)
+      store.fetch(hash, {})[key]
+    end
+
     private
 
       def exists?(key)

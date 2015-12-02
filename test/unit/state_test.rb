@@ -32,6 +32,6 @@ class StateTest < Minitest::Test
 
   def test_hset_sets_value
     assert_equal :ok,   @state.hset('myhash', 'abc', '123')
-    assert_equal '123', @state.hget('abc', 'abc')
+    assert_equal '123', @state.hget('myhash', 'abc')
   end
 end
