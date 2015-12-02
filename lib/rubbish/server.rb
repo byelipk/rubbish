@@ -1,16 +1,16 @@
 require 'socket'
 require_relative './config'
 require_relative './client'
-require_relative './store'
+require_relative './state'
 
 module Rubbish
   class Server
-    attr_reader :port, :shutdown_pipe, :store
+    attr_reader :port, :shutdown_pipe, :state
 
     def initialize(port: Config::DEFAULT_PORT)
       @port          = port
       @shutdown_pipe = IO.pipe
-      @store         = Store.new
+      @state         = State.new
     end
 
     def shutdown
@@ -42,7 +42,7 @@ module Rubbish
             running = false
           else
             begin
-              clients[socket].process!(store)
+              clients[socket].process!(state)
             rescue EOFError
               clients.delete(socket)
               socket.close

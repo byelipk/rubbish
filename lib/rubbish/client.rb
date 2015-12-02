@@ -20,7 +20,7 @@ module Rubbish
       @buffer = String.new
     end
 
-    def process!(store)
+    def process!(state)
       buffer << socket.read_nonblock(BYTES_TO_READ)
 
       # We will translate the current buffer into
@@ -33,8 +33,8 @@ module Rubbish
         response = case cmd[0].downcase
         when "ping" then :pong
         when "echo" then cmd[1]
-        when "get"  then store[cmd[1]]
-        when "set"  then store[cmd[1]] = cmd[2]; :ok
+        when "get"  then state.get(cmd[1])
+        when "set"  then state.set(cmd[1], cmd[2])
         end
 
         # Now we can communicate to the client through
