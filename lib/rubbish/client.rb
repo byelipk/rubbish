@@ -33,8 +33,8 @@ module Rubbish
         response = case cmd[0].downcase
         when "ping" then :pong
         when "echo" then cmd[1]
-        when "get"  then state.get(cmd[1])
-        when "set"  then state.set(cmd[1], cmd[2])
+        when "get"  then state.get(*cmd[1..-1])
+        when "set"  then state.set(*cmd[1..-1])
         end
 
         # Now we can communicate to the client through
