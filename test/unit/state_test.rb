@@ -56,4 +56,13 @@ class StateTest < Minitest::Test
     @state.hset('myhash', 'abc', '1')
     assert_equal 3, @state.hincrby('myhash', 'abc', '2')
   end
+
+  def test_passive_expire_on_a_key
+    @state.set('abc', '123')
+    @state.expire('abc', '1')
+    sleep 0.9
+    assert_equal '123', @state.get('abc')
+    sleep 0.1
+    assert_nil @state.get('abc')
+  end
 end
