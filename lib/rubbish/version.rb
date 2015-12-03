@@ -1,3 +1,3 @@
 module Rubbish
-  VERSION = "0.2.15"
+  VERSION = "0.3.1"
 end
