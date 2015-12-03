@@ -1,10 +1,25 @@
 require_relative '../test_helper'
 require_relative '../../lib/rubbish/state'
 
+class FakeClock
+  def initialize
+    @t = 0
+  end
+
+  def now
+    @t
+  end
+
+  def sleep(duration)
+    @t += duration
+  end
+end
+
 class StateTest < Minitest::Test
 
   def setup
-    @state = Rubbish::State.new
+    @clock = FakeClock.new
+    @state = Rubbish::State.new(clock: @clock)
   end
 
   def test_set_cmd_sets_value
@@ -60,9 +75,9 @@ class StateTest < Minitest::Test
   def test_passive_expire_on_a_key
     @state.set('abc', '123')
     @state.expire('abc', '1')
-    sleep 0.9
+    @clock.sleep 0.9
     assert_equal '123', @state.get('abc')
-    sleep 0.1
+    @clock.sleep 0.1
     assert_nil @state.get('abc')
   end
 end

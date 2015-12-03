@@ -1,11 +1,13 @@
 require 'set'
 require_relative './store'
+require_relative './clock'
 
 module Rubbish
   class State
 
-    def initialize(store: Store.new)
+    def initialize(store: Store.new, clock: Clock.new)
       @store = store
+      @clock = clock
     end
 
     def self.valid_commands
@@ -76,6 +78,10 @@ module Rubbish
     def hincrby(hash, key, amount)
       existing = hget(hash, key)
       store[hash][key] = existing.to_i + amount.to_i
+    end
+
+    def expire(*args)
+
     end
 
     private
