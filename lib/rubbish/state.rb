@@ -98,6 +98,14 @@ module Rubbish
       end
     end
 
+    def exists(key)
+      if store[key]
+        1
+      else
+        0
+      end
+    end
+
     private
 
     attr_reader :store, :expires, :clock

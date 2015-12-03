@@ -80,4 +80,10 @@ class StateTest < Minitest::Test
     @clock.sleep 0.1
     assert_nil @state.get('abc')
   end
+
+  def test_exists_returns_number_of_keys
+    assert_equal 0, @state.exists('abc')
+    @state.set('abc', '123')
+    assert_equal 1, @state.exists('abc')
+  end
 end
