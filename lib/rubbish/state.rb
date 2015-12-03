@@ -5,7 +5,7 @@ require_relative './clock'
 module Rubbish
   class State
 
-    def initialize(store: Store.new, clock: Clock.new)
+    def initialize(store: Hash.new, clock: Clock.new)
       @store   = store
       @clock   = clock
       @expires = Hash.new
