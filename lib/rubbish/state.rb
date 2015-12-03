@@ -126,6 +126,9 @@ module Rubbish
 
     def expire_keys!
       expires.keys.each do |key|
+        # NOTE
+        # Here we can leverage our passive
+        # key expiry system already in place.
         get(key)
       end
     end
