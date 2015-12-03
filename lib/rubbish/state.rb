@@ -124,9 +124,9 @@ module Rubbish
       end
     end
 
-    def expire_keys!(n: 100, threshold: 0.25)
+    def expire_keys!(n: 100, threshold: 0.25, rng: Random.new)
       begin
-        expired = expires.keys.sample(n).count do |key|
+        expired = expires.keys.sample(n, random: rng).count do |key|
           # NOTE
           # Here we can leverage our passive
           # key expiry system already in place.
