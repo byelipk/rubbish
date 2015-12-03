@@ -111,6 +111,15 @@ module Rubbish
       end
     end
 
+    def keys(pattern)
+      if pattern == "*"
+        store.keys
+      else
+        raise NotImplementedError,
+          "keys only accepts a catchall `*`"
+      end
+    end
+
     private
 
     attr_reader :store, :expires, :clock

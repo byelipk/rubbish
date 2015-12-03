@@ -112,4 +112,12 @@ class StateTest < Minitest::Test
     ->(s,k) {s.hset(k, 'abc', '123')},
     ->(s,k) {s.hincrby(k, 'abc', '1')}
 
+
+  def test_keys_returns_all_keys_in_database
+    @state.set('abc', '123')
+    @state.set('def', '456')
+
+    assert_equal @state.keys("*"), %w( abc def )
+  end
+
 end
