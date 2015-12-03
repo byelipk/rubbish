@@ -95,8 +95,12 @@ module Rubbish
     end
 
     def expire(key, duration)
+      pexpire(key, (duration.to_i * 1000))
+    end
+
+    def pexpire(key, duration)
       if get(key)
-        expires[key] = clock.now + duration.to_i
+        expires[key] = clock.now + (duration.to_i / 1000)
         1
       else
         0
@@ -117,6 +121,12 @@ module Rubbish
       else
         raise NotImplementedError,
           "keys only accepts a catchall `*`"
+      end
+    end
+
+    def expire_keys!
+      expires.keys.each do |key|
+        get(key)
       end
     end
 
