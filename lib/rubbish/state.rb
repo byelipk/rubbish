@@ -6,8 +6,9 @@ module Rubbish
   class State
 
     def initialize(store: Store.new, clock: Clock.new)
-      @store = store
-      @clock = clock
+      @store   = store
+      @clock   = clock
+      @expires = Hash.new
     end
 
     def self.valid_commands
@@ -52,7 +53,15 @@ module Rubbish
     end
 
     def get(key)
+      expiry = expires[key]
+      del(key) if expiry && expiry <= clock.now
+
       store[key]
+    end
+
+    def del(key)
+      expires.delete(key)
+      store.delete(key)
     end
 
     def hset(hash, key, value)
@@ -80,13 +89,18 @@ module Rubbish
       store[hash][key] = existing.to_i + amount.to_i
     end
 
-    def expire(*args)
-
+    def expire(key, duration)
+      if get(key)
+        expires[key] = clock.now + duration.to_i
+        1
+      else
+        0
+      end
     end
 
     private
 
-    attr_reader :store
+    attr_reader :store, :expires, :clock
 
     def exists?(key)
       store.has_key?(key)
