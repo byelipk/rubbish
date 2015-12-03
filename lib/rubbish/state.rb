@@ -125,12 +125,14 @@ module Rubbish
     end
 
     def expire_keys!
-      expires.keys.each do |key|
-        # NOTE
-        # Here we can leverage our passive
-        # key expiry system already in place.
-        get(key)
-      end
+      begin
+        expired = expires.keys.sample(100).count do |key|
+          # NOTE
+          # Here we can leverage our passive
+          # key expiry system already in place.
+          get(key)
+        end
+      end while expired > 25
     end
 
     private
