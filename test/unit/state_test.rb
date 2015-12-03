@@ -17,6 +17,24 @@ end
 
 class StateTest < Minitest::Test
 
+  def self.shared_expiry_examples(description, setter, getter)
+    key = 'abc'
+    description.gsub!(/ /, '_')
+
+    define_method "test_#{description}" do
+      setter.call(@state, key)
+      @state.expire(key, '1')
+
+      @clock.sleep 0.9
+      getter.call(@state, key)
+      assert_equal 1, @state.exists(key)
+
+      @clock.sleep 0.1
+      getter.call(@state, key)
+      assert_equal 0, @state.exists(key)
+    end
+  end
+
   def setup
     @clock = FakeClock.new
     @state = Rubbish::State.new(clock: @clock)
@@ -72,18 +90,26 @@ class StateTest < Minitest::Test
     assert_equal 3, @state.hincrby('myhash', 'abc', '2')
   end
 
-  def test_passive_expire_on_a_key
-    @state.set('abc', '123')
-    @state.expire('abc', '1')
-    @clock.sleep 0.9
-    assert_equal '123', @state.get('abc')
-    @clock.sleep 0.1
-    assert_nil @state.get('abc')
-  end
-
   def test_exists_returns_number_of_keys
     assert_equal 0, @state.exists('abc')
     @state.set('abc', '123')
     assert_equal 1, @state.exists('abc')
   end
+
+  shared_expiry_examples "get and set have passive expiry on a key",
+    ->(s,k) {s.set(k, '123')},
+    ->(s,k) {s.get(k)}
+
+  shared_expiry_examples "hget has passive expiry",
+    ->(s,k) {s.hset(k, 'abc', '123')},
+    ->(s,k) {s.hget(k, 'abc')}
+
+  shared_expiry_examples "hmget has passive expiry",
+    ->(s,k) {s.hset(k, 'abc', '123')},
+    ->(s,k) {s.hmget(k, 'abc')}
+
+  shared_expiry_examples "hincrby has passive expiry",
+    ->(s,k) {s.hset(k, 'abc', '123')},
+    ->(s,k) {s.hincrby(k, 'abc', '1')}
+
 end

@@ -72,11 +72,13 @@ module Rubbish
     end
 
     def hget(hash, key)
-      store[hash][key]
+      value = get(hash)
+      value[key] if value
     end
 
     def hmget(hash, *keys)
-      existing = store.fetch(hash, {})
+      existing = get(hash) || Hash.new
+
       if existing.is_a?(Hash)
         existing.values_at(*keys)
       else
@@ -85,8 +87,12 @@ module Rubbish
     end
 
     def hincrby(hash, key, amount)
-      existing = hget(hash, key)
-      store[hash][key] = existing.to_i + amount.to_i
+      value = get(hash)
+
+      if value
+        existing = value[key]
+        value[key] = existing.to_i + amount.to_i
+      end
     end
 
     def expire(key, duration)
