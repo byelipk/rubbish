@@ -1,5 +1,4 @@
 require 'set'
-require_relative './store'
 require_relative './clock'
 
 module Rubbish
