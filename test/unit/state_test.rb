@@ -133,4 +133,18 @@ class StateTest < Minitest::Test
     @state.zadd('leaderboard', '1000', 'charlie')
     assert_equal %w( alice bob ), @state.zrange('leaderboard', '0', '1')
   end
+
+  def test_sorted_sets_can_fetch_rank_by_member
+    @state.zadd('leaderboard', '1000', 'alice')
+    @state.zadd('leaderboard', '3000', 'bob')
+    @state.zadd('leaderboard', '2000', 'charlie')
+    assert_equal 1, @state.zrank('leaderboard', 'charlie')
+  end
+
+  def test_sorted_sets_can_fetch_score_for_member
+    @state.zadd('leaderboard', '1000', 'alice')
+    @state.zadd('leaderboard', '3000', 'bob')
+    @state.zadd('leaderboard', '2000', 'charlie')
+    assert_equal 2000, @state.zscore('leaderboard', 'charlie')
+  end
 end

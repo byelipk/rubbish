@@ -154,6 +154,20 @@ module Rubbish
       end
     end
 
+    def zrank(key, member)
+      value = get(key)
+      if value
+        value.rank(member)
+      end
+    end
+
+    def zscore(key, member)
+      value = get(key)
+      if value
+        value.score(member)
+      end
+    end
+
     private
 
     attr_reader :store, :expires, :clock
@@ -176,6 +190,14 @@ module Rubbish
 
     def range(start, stop)
       @entries[start..stop].map {|x| x[1]}
+    end
+
+    def rank(member)
+      @entries.index {|x| x[1] == member}
+    end
+
+    def score(member)
+      @entries.detect {|x| x[1] == member}[0]
     end
   end
 end
