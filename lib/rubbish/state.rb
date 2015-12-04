@@ -61,6 +61,7 @@ module Rubbish
     end
 
     def del(key)
+      touch!(key)
       expires.delete(key)
       store.delete(key)
     end
@@ -69,6 +70,7 @@ module Rubbish
       store[hash] ||= Hash.new
       store[hash][key] = value
 
+      touch!(key)
       :ok
     end
 
@@ -93,6 +95,9 @@ module Rubbish
       if value
         existing = value[key]
         value[key] = existing.to_i + amount.to_i
+        touch!(key)
+
+        value[key]
       end
     end
 
@@ -144,6 +149,8 @@ module Rubbish
 
       value.add(score, member)
 
+      touch!(key)
+      
       1
     end
 
