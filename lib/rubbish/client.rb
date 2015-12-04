@@ -10,9 +10,6 @@ module Rubbish
 
     BYTES_TO_READ = 1024
 
-    attr_reader :socket
-    attr_accessor :buffer
-
     def_delegator :unmarshaler, :unmarshal
 
     def initialize(socket)
@@ -43,6 +40,8 @@ module Rubbish
     end
 
     private
+
+      attr_reader :socket, :buffer
 
       def unmarshaler
         Unmarshaler.new
