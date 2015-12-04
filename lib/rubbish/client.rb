@@ -46,7 +46,7 @@ module Rubbish
             reset_tx!
             result
           else
-            @tx.queue(cmd); :queued
+            tx.queue(cmd); :queued
           end
         else
           dispatch(state, cmd)
