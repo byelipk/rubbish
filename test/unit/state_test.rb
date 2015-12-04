@@ -147,4 +147,18 @@ class StateTest < Minitest::Test
     @state.zadd('leaderboard', '2000', 'charlie')
     assert_equal 2000, @state.zscore('leaderboard', 'charlie')
   end
+
+  describe "lists" do
+    it "supports basic operations" do
+      @state.lpush('q', 'a')
+      @state.lpush('q', 'b')
+      @state.rpush('q', 'c')
+
+      assert_equal 3, @state.llen('q')
+      assert_equal %w( b a ), @state.lrange('q', '0', '1')
+
+      assert_equal 'c', @state.rpop('q')
+      assert_equal 2,   @state.llen('q')
+    end
+  end
 end
