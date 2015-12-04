@@ -184,6 +184,10 @@ module Rubbish
       store.has_key?(key)
     end
 
+    # NOTE
+    # If a key is never updated, we never actually
+    # clear out any callbacks even though the
+    # transaction may have finished.
     def touch!(key)
       ws = watches.delete(key) || []
       ws.each(&:call)
