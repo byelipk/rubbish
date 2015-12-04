@@ -8,6 +8,7 @@ module Rubbish
       @store   = store
       @clock   = clock
       @expires = Hash.new
+      @watches = Hash.new
     end
 
     def self.valid_commands
@@ -17,7 +18,7 @@ module Rubbish
     end
 
     def self.readonly_commands
-      %w( apply_command )
+      %w( apply_command watch )
     end
 
     def self.valid_command?(cmd)
@@ -46,6 +47,7 @@ module Rubbish
          (nx && !exists?(key)) ||
          (xx && exists?(key))
 
+        touch!(key)
         store[key] = value
         :ok
       end
@@ -168,12 +170,23 @@ module Rubbish
       end
     end
 
+    def watch(key, &blk)
+      watches[key] ||= Array.new
+      watches[key] << blk if blk
+      :ok
+    end
+
     private
 
-    attr_reader :store, :expires, :clock
+    attr_reader :store, :expires, :clock, :watches
 
     def exists?(key)
       store.has_key?(key)
+    end
+
+    def touch!(key)
+      ws = watches.delete(key) || []
+      ws.each(&:call)
     end
 
   end

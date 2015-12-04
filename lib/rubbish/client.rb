@@ -41,7 +41,7 @@ module Rubbish
           when "exec" then
             result = tx.buffer.map do |c|
               dispatch(state, c)
-            end
+            end unless tx.dirty?
 
             reset_tx!
             result
@@ -71,6 +71,11 @@ module Rubbish
         when "ping"  then :pong
         when "echo"  then cmd[1]
         when "multi" then tx.start!; :ok
+        when "watch" then
+          current_tx = tx
+          state.watch(cmd[1]) {
+            tx.dirty! if current_tx == tx
+          }
         else state.apply_command(cmd)
         end
       end
