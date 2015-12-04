@@ -135,6 +135,25 @@ module Rubbish
       end while expired > n * threshold
     end
 
+    def zadd(key, score, member)
+      score = score.to_f
+
+      value = get(key) || store[key] = ZSet.new
+
+      value.add(score, member)
+
+      1
+    end
+
+    def zrange(key, start, stop)
+      value = get(key)
+      if value
+        value.range(start.to_i, stop.to_i)
+      else
+        []
+      end
+    end
+
     private
 
     attr_reader :store, :expires, :clock
@@ -143,5 +162,20 @@ module Rubbish
       store.has_key?(key)
     end
 
+  end
+
+  class ZSet
+    def initialize
+      @entries = []
+    end
+
+    def add(score, member)
+      @entries << [score, member]
+      @entries.sort!
+    end
+
+    def range(start, stop)
+      @entries[start..stop].map {|x| x[1]}
+    end
   end
 end

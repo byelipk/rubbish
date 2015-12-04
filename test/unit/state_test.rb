@@ -120,4 +120,17 @@ class StateTest < Minitest::Test
     assert_equal @state.keys("*"), %w( abc def )
   end
 
+  def test_sorted_sets_fetch_keys_by_rank
+    @state.zadd('leaderboard', '1000', 'alice')
+    @state.zadd('leaderboard', '3000', 'bob')
+    @state.zadd('leaderboard', '2000', 'charlie')
+    assert_equal %w( alice charlie ), @state.zrange('leaderboard', '0', '1')
+  end
+
+  def test_sorted_sets_break_ties_on_score
+    @state.zadd('leaderboard', '1000', 'alice')
+    @state.zadd('leaderboard', '1000', 'bob')
+    @state.zadd('leaderboard', '1000', 'charlie')
+    assert_equal %w( alice bob ), @state.zrange('leaderboard', '0', '1')
+  end
 end
