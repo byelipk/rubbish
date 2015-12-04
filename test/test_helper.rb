@@ -3,6 +3,9 @@ require 'minitest/autorun'
 require 'pry'
 require 'pry-byebug'
 require 'redis'
+
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+
 require 'rubbish'
 
 module AcceptanceHelper
