@@ -1,7 +1,7 @@
 require 'socket'
-require_relative './config'
-require_relative './client'
-require_relative './state'
+require 'rubbish/config'
+require 'rubbish/client'
+require 'rubbish/state'
 
 module Rubbish
   class Server

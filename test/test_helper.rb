@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require 'pry'
 require 'pry-byebug'
 require 'redis'
-require_relative '../lib/rubbish'
+require 'rubbish'
 
 module AcceptanceHelper
   TEST_PORT = 6380

@@ -1,8 +1,8 @@
 require 'stringio'
 require 'forwardable'
-require_relative './unmarshaler'
-require_relative './protocol'
-require_relative './transaction'
+require 'rubbish/unmarshaler'
+require 'rubbish/protocol'
+require 'rubbish/transaction'
 
 module Rubbish
   class Client

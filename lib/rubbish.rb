@@ -1,5 +1,5 @@
-require_relative './rubbish/version'
-require_relative './rubbish/server'
+require 'rubbish/version'
+require 'rubbish/server'
 
 module Rubbish
   ProtocolError = Class.new(RuntimeError)

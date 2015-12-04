@@ -1,6 +1,6 @@
 require 'set'
-require_relative './clock'
-require_relative './zset'
+require 'rubbish/clock'
+require 'rubbish/zset'
 
 module Rubbish
   class State
