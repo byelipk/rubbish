@@ -30,7 +30,6 @@ class BlockingCommandsTest < Minitest::Test
   end
 
   def test_it_handles_disconnecting_clients
-    skip
     with_server do
       s = TCPSocket.new('localhost', TEST_PORT)
       s.write("*3\r\n$5\r\nbrpop\r\n$1\r\nq\r\n$1\r\no\r\n")
