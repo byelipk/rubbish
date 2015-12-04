@@ -36,7 +36,32 @@ module Rubbish
       @buffer = buffer[processed..-1]
 
       cmds.each do |cmd|
-        response = if tx.active?
+        response = response_for_client(cmd, state)
+
+        unless response == :block
+          respond_to_client!(response)
+        end
+
+        state.process_list_watches!
+      end
+    end
+
+    def respond_to_client!(response)
+      # Now we can communicate to the client through
+      # the client socket.
+      socket.write Rubbish::Protocol.marshal(response)
+    end
+
+    private
+
+      attr_reader :socket, :buffer, :tx
+
+      def unmarshaler
+        Unmarshaler.new
+      end
+
+      def response_for_client(cmd, state)
+        if tx.active?
           case cmd[0].downcase
           when "exec" then
             result = tx.buffer.map do |c|
@@ -51,27 +76,6 @@ module Rubbish
         else
           dispatch(state, cmd)
         end
-
-        unless response == :block
-          respond!(response)
-        end
-
-        state.process_list_watches!
-      end
-    end
-
-    def respond!(response)
-      # Now we can communicate to the client through
-      # the client socket.
-      socket.write Rubbish::Protocol.marshal(response)
-    end
-
-    private
-
-      attr_reader :socket, :buffer, :tx
-
-      def unmarshaler
-        Unmarshaler.new
       end
 
       def dispatch(state, cmd)
