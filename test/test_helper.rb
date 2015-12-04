@@ -26,12 +26,12 @@ module AcceptanceHelper
 
     yield
 
-  rescue Redis::ConnectionError, Redis::CannotConnectError
+  # rescue Redis::ConnectionError, Redis::CannotConnectError
     # NOTE
     # This is to keep our tests passing if they
     # keep smashing into each other during test
     # runs.
-    retry
+    # retry
   rescue TimeoutError
     sleep 0.01
 
