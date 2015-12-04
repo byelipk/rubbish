@@ -149,6 +149,12 @@ class StateTest < Minitest::Test
   end
 
   describe "lists" do
+
+    before do
+      @clock = FakeClock.new
+      @state = Rubbish::State.new(clock: @clock)
+    end
+
     it "supports basic operations" do
       @state.lpush('q', 'a')
       @state.lpush('q', 'b')

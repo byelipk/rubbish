@@ -184,6 +184,47 @@ module Rubbish
       :ok
     end
 
+    def lpush(key, value)
+      list = safe_list(key)
+
+      touch!(key)
+      list.unshift(value)
+      list.length
+    end
+
+    def rpush(key, value)
+      list = safe_list(key)
+
+      touch!(key)
+      list.push(value)
+      list.length
+    end
+
+    def llen(key)
+      list = get(key) || Array.new
+      list.length
+    end
+
+    def rpop(key)
+      list = safe_list(key)
+
+      touch!(key)
+      list.pop
+    end
+
+    def lpop(key)
+      list = safe_list(key)
+
+      touch!(key)
+      list.shift
+    end
+
+    def lrange(key, start, stop)
+      list = safe_list(key)
+
+      list[start.to_i..stop.to_i]
+    end
+
     private
 
     attr_reader :store, :expires, :clock, :watches
@@ -199,6 +240,12 @@ module Rubbish
     def touch!(key)
       ws = watches.delete(key) || []
       ws.each(&:call)
+    end
+
+    def safe_list(key)
+      list = get(key)
+      list ||= store[key] = Array.new
+      list
     end
 
   end
