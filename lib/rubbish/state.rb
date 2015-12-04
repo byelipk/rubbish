@@ -10,6 +10,11 @@ module Rubbish
       @clock        = clock
       @expires      = Hash.new
       @watches      = Hash.new
+
+      # NOTE
+      # These two data structures are
+      # needed to implement blocking
+      # operations.
       @list_watches = Hash.new
       @ready_keys   = Array.new
     end
