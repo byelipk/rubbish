@@ -68,7 +68,8 @@ module Rubbish
             begin
               clients[socket].process!(state)
             rescue EOFError
-              clients.delete(socket)
+              client = clients.delete(socket)
+              client.disconnect!
               socket.close
             end
           end

@@ -48,7 +48,10 @@ module Rubbish
 
         while list.any? && watches.any?
           op, client = *watches.shift
-          client.respond_to_client!(op.call)
+
+          if client.active?
+            client.respond_to_client!(op.call)
+          end
         end
       end
 

@@ -47,9 +47,19 @@ module Rubbish
     end
 
     def respond_to_client!(response)
-      # Now we can communicate to the client through
-      # the client socket.
-      socket.write Rubbish::Protocol.marshal(response)
+      if socket
+        # Now we can communicate to the client through
+        # the client socket.
+        socket.write Rubbish::Protocol.marshal(response)
+      end
+    end
+
+    def active?
+      socket
+    end
+
+    def disconnect!
+      @socket = nil
     end
 
     private
