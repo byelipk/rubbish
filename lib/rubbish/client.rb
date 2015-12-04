@@ -29,6 +29,8 @@ module Rubbish
       # as many commands as possible.
       cmds, processed = unmarshal(buffer)
 
+      # Move the buffer forward by releasing
+      # the commands that are about to be processed.
       @buffer = buffer[processed..-1]
 
       cmds.each do |cmd|
