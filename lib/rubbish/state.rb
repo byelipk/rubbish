@@ -6,10 +6,12 @@ module Rubbish
   class State
 
     def initialize(store: Hash.new, clock: Clock.new)
-      @store   = store
-      @clock   = clock
-      @expires = Hash.new
-      @watches = Hash.new
+      @store        = store
+      @clock        = clock
+      @expires      = Hash.new
+      @watches      = Hash.new
+      @list_watches = Hash.new
+      @ready_keys   = Array.new
     end
 
     def self.valid_commands
@@ -32,6 +34,20 @@ module Rubbish
       end
 
       public_send(*cmd)
+    end
+
+    def process_list_watches!
+      ready_keys.each do |key|
+        list    = get(key)
+        watches = list_watches.fetch(key, [])
+
+        while list.any? && watches.any?
+          op, client = *watches.shift
+          client.respond!(op.call)
+        end
+      end
+
+      ready_keys.clear
     end
 
     def set(*args)
@@ -187,6 +203,10 @@ module Rubbish
     def lpush(key, value)
       list = safe_list(key)
 
+      if list_watches.fetch(key, []).any?
+        ready_keys << key
+      end
+
       touch!(key)
       list.unshift(value)
       list.length
@@ -225,9 +245,28 @@ module Rubbish
       list[start.to_i..stop.to_i]
     end
 
+    def brpop(key, client)
+      list = safe_list(key)
+
+      action = ->{ rpop(key) }
+
+      if list.empty?
+        list_watches[key] ||= []
+        list_watches[key] << [action, client]
+        :block
+      else
+        action.call
+      end
+    end
+
     private
 
-    attr_reader :store, :expires, :clock, :watches
+    attr_reader :store,
+                :expires,
+                :clock,
+                :watches,
+                :list_watches,
+                :ready_keys
 
     def exists?(key)
       store.has_key?(key)

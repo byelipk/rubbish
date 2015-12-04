@@ -52,10 +52,18 @@ module Rubbish
           dispatch(state, cmd)
         end
 
-        # Now we can communicate to the client through
-        # the client socket.
-        socket.write Rubbish::Protocol.marshal(response)
+        unless response == :block
+          respond!(response)
+        end
+
+        state.process_list_watches!
       end
+    end
+
+    def respond!(response)
+      # Now we can communicate to the client through
+      # the client socket.
+      socket.write Rubbish::Protocol.marshal(response)
     end
 
     private
@@ -76,6 +84,8 @@ module Rubbish
           state.watch(cmd[1]) {
             tx.dirty! if current_tx == tx
           }
+        when "brpop" then
+          state.brpop(cmd[1], self)
         else state.apply_command(cmd)
         end
       end
