@@ -2,6 +2,7 @@ require 'stringio'
 require 'forwardable'
 require_relative './unmarshaler'
 require_relative './protocol'
+require_relative './transaction'
 
 module Rubbish
   class Client
@@ -15,11 +16,12 @@ module Rubbish
     def initialize(socket)
       @socket = socket
       @buffer = String.new
-      @tx_buf = nil
+
+      reset_tx!
     end
 
-    def in_tx?
-      @tx_buf
+    def reset_tx!
+      @tx = Transaction.new
     end
 
     def process!(state)
@@ -34,14 +36,17 @@ module Rubbish
       @buffer = buffer[processed..-1]
 
       cmds.each do |cmd|
-        response = if in_tx?
+        response = if tx.active?
           case cmd[0].downcase
           when "exec" then
-            result  = @tx_buf.map {|c| dispatch(state, c)}
-            @tx_buf = nil
+            result = tx.buffer.map do |c|
+              dispatch(state, c)
+            end
+
+            reset_tx!
             result
           else
-            @tx_buf << cmd; :queued
+            @tx.queue(cmd); :queued
           end
         else
           dispatch(state, cmd)
@@ -55,7 +60,7 @@ module Rubbish
 
     private
 
-      attr_reader :socket, :buffer
+      attr_reader :socket, :buffer, :tx
 
       def unmarshaler
         Unmarshaler.new
@@ -65,7 +70,7 @@ module Rubbish
         case cmd[0].downcase
         when "ping"  then :pong
         when "echo"  then cmd[1]
-        when "multi" then @tx_buf = []; :ok
+        when "multi" then tx.start!; :ok
         else state.apply_command(cmd)
         end
       end
