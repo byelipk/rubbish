@@ -29,6 +29,13 @@ class BlockingCommandsTest < Minitest::Test
     end
   end
 
+  # TODO
+  # Keys that are not written to will just hang around.
+  # We will need to clean them up.
+  #
+  # We need to keep track of the keys we're watching
+  # in the client handler so we can explicitly clean
+  # them out from the state on client disconnect.
   def test_it_handles_disconnecting_clients
     with_server do
       s = TCPSocket.new('localhost', TEST_PORT)
